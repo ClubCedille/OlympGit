@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - uses: actions/create-github-app-token@v1
-        id: hydra
+        id: oracle
         with:
           app-id: ${{ vars.HYDRA_APP_ID }}
           private-key: ${{ secrets.HYDRA_APP_KEY }}
@@ -24,13 +24,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: olympgit
-          token: ${{ steps.hydra.outputs.token }}
+          token: ${{ steps.oracle.outputs.token }}
           persist-credentials: true
 
-      - name: The Hydra grows another head 🐉
+      - name: Consult the Prophecy Scroll
+        id: prophecy
         run: |
-          head="- 🐉 Hydra Head $(date +%s)"
-          sed -i "3i\\${head}" HALL_OF_GITFAME.md
+          required=$(( ( ${{ github.event.pull_request.number }} % 3 ) + 2 ))
+          echo "required=$required" >> "$GITHUB_OUTPUT"
+          echo "The gods demand $required head(s) for this quest."
+
+      - name: Tally of Slain and Living Heads
+        id: tally
+        run: |
+          present=$(grep -c "🐉 Hydra Head" HALL_OF_GITFAME.md || true)
+          echo "present=$present" >> "$GITHUB_OUTPUT"
+          echo "Hydra currently has $present head(s)."
+
+      - name: The Hydra sprouts another head! 🐉
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        run: |
+          new_head="- 🐉 Hydra Head $(date +%s)"
+          sed -i "3i\\${new_head}" HALL_OF_GITFAME.md
+          echo "New head added: ${new_head}"
 
       - name: Commit the Hydra’s challenge
         run: |
@@ -40,3 +56,14 @@ jobs:
             git commit -am "chore(hydra): grows another head"
             git push origin olympgit
           }
+
+      - name: Hydra’s battle-cry
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ steps.oracle.outputs.token }}
+          message: |
+            > ⚔️ **The Hydra of Lerna has sprouted a fresh head!**
+            >
+            > Brave hero, resolve the conflict, commit, and push again.
+            > Only when **all heads lie in the dust** shall Heracles let you merge.
