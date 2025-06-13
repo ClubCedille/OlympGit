@@ -7,14 +7,14 @@ on:
 
 jobs:
   spawn-head:
-    if: github.actor != 'hydra-bot'
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
     steps:
-      - name: ‘Hail OlympGit!’ — checkout the arena
+      - name: Hail OlympGit! — checkout the arena
         uses: actions/checkout@v4
         with:
           ref: olympgit
