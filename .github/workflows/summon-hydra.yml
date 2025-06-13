@@ -65,13 +65,30 @@ jobs:
             git push origin olympgit
           }
 
+      - name: Compute counters
+        id: counters
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        shell: bash
+        env:
+          PRESENT:  ${{ steps.tally.outputs.present }}
+          REQUIRED: ${{ steps.prophecy.outputs.required }}
+        run: |
+          after=$(( PRESENT + 1 ))
+          remaining=$(( REQUIRED - after ))
+          echo "after=$after"       >> "$GITHUB_OUTPUT"
+          echo "remaining=$remaining" >> "$GITHUB_OUTPUT"
+
       - name: Hydra’s battle-cry
         if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
         uses: mshick/add-pr-comment@v2
         with:
           repo-token: ${{ steps.oracle.outputs.token }}
+          message-id: hydra-quest-${{ github.event.pull_request.number }}
           message: |
             > ⚔️ **The Hydra of Lerna has sprouted a fresh head!**
             >
-            > Brave hero, resolve the conflict, commit, and push again.
-            > Only when **all heads lie in the dust** shall Heracles let you merge.
+            > 🐉 Heads standing: **${{ steps.counters.outputs.after }} / ${{ steps.prophecy.outputs.required }}**  
+            > 💀 Heads remaining: **${{ steps.counters.outputs.remaining }}**
+            >
+            > Brave hero, resolve the conflict, commit, and push again.<br>
+            > Heracles will not let you merge until **all heads lie in the dust**.
