@@ -23,12 +23,9 @@ jobs:
       - name: Hail OlympGit! — checkout the arena
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: olympgit
           token: ${{ steps.oracle.outputs.token }}
           persist-credentials: true
-
-      - name: Fetch olympgit
-        run: git fetch origin olympgit:olympgit
 
       - name: Consult the Prophecy Scroll
         id: prophecy
@@ -37,19 +34,27 @@ jobs:
           echo "required=$required" >> "$GITHUB_OUTPUT"
           echo "The gods demand $required head(s) for this quest."
 
-      - name: Tally heads for this quest
+      - name: Tally of Slain and Living Heads
         id: tally
+        env:
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          pr=${{ github.event.pull_request.number }}
-          present=$(grep -c "🐉 Hydra Head #${pr}" olympgit:HALL_OF_GITFAME.md || true)
-          echo "present=$present" >>"$GITHUB_OUTPUT"
+          cd "$GITHUB_WORKSPACE"
+          pattern="^[-] 🐉 Hydra Head #${PR}"
+          present=$(grep -c "$pattern" -- 'HALL_OF_GITFAME.md' || true)
+          echo "present=$present" >> "$GITHUB_OUTPUT"
+          echo "Hydra currently has $present head(s) for PR #${PR}."
+
 
       - name: The Hydra sprouts another head! 🐉
-        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.need }}
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        env:
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          pr=${{ github.event.pull_request.number }}
-          head="- 🐉 Hydra Head #${pr} $(date +%s)"
-          sed -i "3i\\${head}" HALL_OF_GITFAME.md
+          new_head="- 🐉 Hydra Head #${PR} $(date +%s)"
+          sed -i "3i\\${new_head}" HALL_OF_GITFAME.md
+          echo "Head spawned for PR #${PR}"
+
 
       - name: Commit the Hydra’s challenge
         run: |
@@ -60,13 +65,30 @@ jobs:
             git push origin olympgit
           }
 
+      - name: Compute counters
+        id: counters
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        shell: bash
+        env:
+          PRESENT:  ${{ steps.tally.outputs.present }}
+          REQUIRED: ${{ steps.prophecy.outputs.required }}
+        run: |
+          after=$(( PRESENT + 1 ))
+          remaining=$(( REQUIRED - after ))
+          echo "after=$after"       >> "$GITHUB_OUTPUT"
+          echo "remaining=$remaining" >> "$GITHUB_OUTPUT"
+
       - name: Hydra’s battle-cry
         if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
         uses: mshick/add-pr-comment@v2
         with:
           repo-token: ${{ steps.oracle.outputs.token }}
+          message-id: hydra-quest-${{ github.event.pull_request.number }}
           message: |
             > ⚔️ **The Hydra of Lerna has sprouted a fresh head!**
             >
-            > Brave hero, resolve the conflict, commit, and push again.
-            > Only when **all heads lie in the dust** shall Heracles let you merge.
+            > 🐉 Heads standing: **${{ steps.counters.outputs.after }} / ${{ steps.prophecy.outputs.required }}**  
+            > 💀 Heads remaining: **${{ steps.counters.outputs.remaining }}**
+            >
+            > Brave hero, resolve the conflict, commit, and push again.<br>
+            > Heracles will not let you merge until **all heads lie in the dust**.

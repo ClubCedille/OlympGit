@@ -8,16 +8,30 @@ on:
 jobs:
   slay-check:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Ensure all Hydra heads are gone
+        env:
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          if grep -q "🐉 Hydra Head" HALL_OF_GITFAME.md; then
-            echo "::error::Hydra heads still present — keep fighting!"
+          pattern="^[-] 🐉 Hydra Head #${PR}"
+          if grep -q "$pattern" -- HALL_OF_GITFAME.md; then
+            echo "::error::Hydra heads for quest #${PR} still present — keep fighting!"
             exit 1
           else
-            echo "No heads found. Heracles nods in approval. 💪"
+            echo "No heads found for quest #${PR}. Heracles nods in approval. 💪"
           fi
+
+      - name: Announce Hydra defeat
+        if: success()
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message-id: hydra-quest-${{ github.event.pull_request.number }}
+          message: |
+            > 🏆 **The Hydra has fallen!**  
+            > Heracles is pleased — you may now merge and claim your place in the Hall of GitFame. 🌟
