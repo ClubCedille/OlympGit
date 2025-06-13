@@ -7,17 +7,24 @@ on:
 
 jobs:
   spawn-head:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'Hydra of Lerna[bot]'
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: hydra
+        with:
+          app-id: ${{ vars.HYDRA_APP_ID }}
+          private-key: ${{ secrets.HYDRA_APP_KEY }}
+
       - name: Hail OlympGit! — checkout the arena
         uses: actions/checkout@v4
         with:
           ref: olympgit
+          token: ${{ steps.hydra.outputs.token }}
           persist-credentials: true
 
       - name: The Hydra grows another head 🐉
@@ -29,5 +36,7 @@ jobs:
         run: |
           git config user.name  "Hydra of Lerna"
           git config user.email "hydra@github.com"
-          git commit -am "chore(hydra): grows another head"
-          git push origin olympgit
+          git diff --quiet || {
+            git commit -am "chore(hydra): grows another head"
+            git push origin olympgit
+          }
