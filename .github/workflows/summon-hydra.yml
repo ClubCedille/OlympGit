@@ -23,9 +23,12 @@ jobs:
       - name: Hail OlympGit! — checkout the arena
         uses: actions/checkout@v4
         with:
-          ref: olympgit
+          ref: ${{ github.event.pull_request.head.sha }}
           token: ${{ steps.oracle.outputs.token }}
           persist-credentials: true
+
+      - name: Fetch olympgit
+        run: git fetch origin olympgit:olympgit
 
       - name: Consult the Prophecy Scroll
         id: prophecy
@@ -34,19 +37,19 @@ jobs:
           echo "required=$required" >> "$GITHUB_OUTPUT"
           echo "The gods demand $required head(s) for this quest."
 
-      - name: Tally of Slain and Living Heads
+      - name: Tally heads for this quest
         id: tally
         run: |
-          present=$(grep -c "🐉 Hydra Head" HALL_OF_GITFAME.md || true)
-          echo "present=$present" >> "$GITHUB_OUTPUT"
-          echo "Hydra currently has $present head(s)."
+          pr=${{ github.event.pull_request.number }}
+          present=$(grep -c "🐉 Hydra Head #${pr}" olympgit:HALL_OF_GITFAME.md || true)
+          echo "present=$present" >>"$GITHUB_OUTPUT"
 
       - name: The Hydra sprouts another head! 🐉
-        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.required }}
+        if: ${{ steps.tally.outputs.present < steps.prophecy.outputs.need }}
         run: |
-          new_head="- 🐉 Hydra Head $(date +%s)"
-          sed -i "3i\\${new_head}" HALL_OF_GITFAME.md
-          echo "New head added: ${new_head}"
+          pr=${{ github.event.pull_request.number }}
+          head="- 🐉 Hydra Head #${pr} $(date +%s)"
+          sed -i "3i\\${head}" HALL_OF_GITFAME.md
 
       - name: Commit the Hydra’s challenge
         run: |
