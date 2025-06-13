@@ -92,3 +92,14 @@ jobs:
             >
             > Brave hero, resolve the conflict, commit, and push again.<br>
             > Heracles will not let you merge until **all heads lie in the dust**.
+
+      - name: Hydra defeated
+        if: ${{ steps.tally.outputs.present >= steps.prophecy.outputs.required }}
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ steps.oracle.outputs.token }}
+          message-id: hydra-quest-${{ github.event.pull_request.number }}
+          message: |
+            > 🏆 **The Hydra is slain!**  
+            > All heads for this quest lie in the dust.  
+            > Merge and claim your place in the Hall of GitFame. 🎉
