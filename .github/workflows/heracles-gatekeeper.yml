@@ -1,0 +1,23 @@
+name: Trial of Heracles — Gatekeeper
+
+on:
+  pull_request:
+    branches: [olympgit]
+    types: [synchronize, ready_for_review, reopened]
+
+jobs:
+  slay-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Ensure all Hydra heads are gone
+        run: |
+          if grep -q "🐉 Hydra Head" HALL_OF_GITFAME.md; then
+            echo "::error::Hydra heads still present — keep fighting!"
+            exit 1
+          else
+            echo "No heads found. Heracles nods in approval. 💪"
+          fi
