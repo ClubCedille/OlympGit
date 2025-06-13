@@ -30,10 +30,11 @@ All who master branching, pulls, and conflict-slaying earn eternal glory in the
 | # | Trial | Command / Action |
 |---|-------|------------------|
 | 1 | **Enter Olympus** | `git clone <repo-url>` |
-| 2 | **Inscribe Your First Mark** | Edit **`HALL_OF_GITFAME.md`** and add your line *at the very top*. |
-| 3 | **Seal the Offering** | `git add HALL_OF_GITFAME.md`<br>`git commit -m "feat: add <Your Name> to Hall of GitFame"`<br>`git push origin add-<your-name>` |
-| 4 | **Present Your Petition to the Gods** | Open a Pull Request:<br>• **Base:** `olympgit`<br>• **Compare:** `add-<your-name>`<br>• Title: `🏛️ Feat: Add <Your Name> to the Hall of GitFame` |
+| 2 | **Branch for Glory** | `git checkout -b add-<your-name>`<br>*(replace `<your-name>` with your actual git username)* |
+| 3 | **Inscribe Your First Mark** | Edit **`HALL_OF_GITFAME.md`** and add your line *at the very top*. |
+| 4 | **Seal the Offering** | `git add HALL_OF_GITFAME.md`<br>`git commit -m "feat: add <Your Name> to Hall of GitFame"`<br>`git push origin add-<your-name>` |
+| 5 | **Present Your Petition to the Gods** | Open a Pull Request:<br>• **Base:** `olympgit`<br>• **Compare:** `add-<your-name>`<br>• Title: `🏛️ Feat: Add <Your Name> to the Hall of GitFame` |
 
 > 🗝️ *What lies beyond?*  
-> After Trial 4, the Hydra awakens; a new scroll will guide you through
+> After Trial 5, the Hydra awakens; a new scroll will guide you through
 conflict-slaying and final ascension.
