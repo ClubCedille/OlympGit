@@ -1,5 +1,5 @@
 # 🧙 Immortals of Git
 
-- alex-vegas22
+- 🏛️ SonOfLope
 - 🛡️ Ada Lovelace
 - 🧙‍♂️ Linus Torvalds
