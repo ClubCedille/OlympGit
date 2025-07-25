@@ -1,6 +1,6 @@
 # 🧙 Immortals of Git
 
-+- 🛡️ king of nomads (benjamin) 
+- 🛡️ king of nomads (benjamin) 
 - 😴 Amine Fanid
 - 🥭 JulienGiguere
 - 🏛️ SonOfLope
