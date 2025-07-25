@@ -1,6 +1,7 @@
 # 🧙 Immortals of Git
 
 +- 🛡️ king of nomads (benjamin) 
+- 😴 Amine Fanid
 - 🥭 JulienGiguere
 - 🏛️ SonOfLope
 - 🛡️ Ada Lovelace
