@@ -1,8 +1,7 @@
 # 🧙 Immortals of Git
 
-- 🐉 Hydra Head #18 1759960423
+- 🗿 Hassaan Bahsoun
 - ⚔️ Ndiaga Cisse
-- 🐉 Hydra Head #18 1759960194
 - 🛡️ king of nomads (benjamin) 
 - 😴 Amine Fanid
 - 🥭 JulienGiguere
